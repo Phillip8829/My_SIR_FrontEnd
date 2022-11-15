@@ -11,3 +11,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.Links{
+text-align: center;
+font-size: 2em;
+ align-items: center;
+}
+.Links img {
+    width: 500px;
+
+}
