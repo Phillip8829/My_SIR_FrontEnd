@@ -20,45 +20,46 @@ import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
+import axios from "axios";
+import {Button} from "@mui/material";
+import {useState} from "react";
+
+
+
 
 interface Data {
-    calories: number;
-    carbs: number;
-    fat: number;
+    Location: string;
+    IncidentType: string;
     EventDate: string;
-    protein: number;
+    EventType: string;
+    Harm: number;
+    IndividualInvolved: number;
+    Details: string;
 }
 
 function createData(
     EventDate: string,
-    calories: number,
-    fat: number,
-    carbs: number,
-    protein: number,
+    Location: string,
+    IncidentType: string,
+    Harm: number,
+    IndividualInvolved: number,
+    EventType: string,
+    Details: string
 ): Data {
     return {
+        Location,
+        IncidentType,
         EventDate,
-        calories,
-        fat,
-        carbs,
-        protein,
+        Harm,
+        IndividualInvolved,
+        EventType,
+        Details
     };
 }
 
 const rows = [
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Donut', 452, 25.0, 51, 4.9),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    createData('Honeycomb', 408, 3.2, 87, 6.5),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Jelly Bean', 375, 0.0, 94, 0.0),
-    createData('KitKat', 518, 26.0, 65, 7.0),
-    createData('Lollipop', 392, 0.2, 98, 0.0),
-    createData('Marshmallow', 318, 0, 81, 2.0),
-    createData('Nougat', 360, 19.0, 9, 37.0),
-    createData('Oreo', 437, 18.0, 63, 4.0),
+    createData('11-12-23', "305", "A", 1, 1,"A","A"),
+    createData('11-13-23', "307", "A", 1, 1,"A","A"),
 ];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -114,37 +115,37 @@ const headCells: readonly HeadCell[] = [
         label: 'Event Date',
     },
     {
-        id: 'calories',
-        numeric: true,
+        id: 'Location',
+        numeric: false,
         disablePadding: false,
         label: 'Location',
     },
     {
-        id: 'fat',
+        id: 'IncidentType',
         numeric: true,
         disablePadding: false,
         label: 'Incident Type',
     },
     {
-        id: 'carbs',
+        id: 'Harm',
         numeric: true,
         disablePadding: false,
         label: 'Harm',
     },
     {
-        id: 'protein',
+        id: 'IndividualInvolved',
         numeric: true,
         disablePadding: false,
-        label: 'Individual(s) Involved',
+        label: 'IndividualInvolved',
     },
     {
-        id: 'protein',
+        id: 'EventType',
         numeric: true,
         disablePadding: false,
-        label: 'Event Type',
+        label: 'EventType',
     },
     {
-        id: 'protein',
+        id: 'Details',
         numeric: true,
         disablePadding: false,
         label: 'Details',
@@ -212,8 +213,14 @@ interface EnhancedTableToolbarProps {
     numSelected: number;
 }
 
+
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
+
+
     const { numSelected } = props;
+
+
+
 
     return (
         <Toolbar
@@ -242,7 +249,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                     id="tableTitle"
                     component="div"
                 >
-                    Nutrition
+
+                    Incident Reports
                 </Typography>
             )}
             {numSelected > 0 ? (
@@ -263,8 +271,30 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 }
 
 export default function EnhancedTable() {
+
+    const URL: string = "http://localhost:8080/Report"
+
+
+    async function GetAllRecommendations()
+    {
+
+            try{
+                const response = await
+                axios.get(URL)
+                console.log(response.data)
+                setSirList(response.data[0])
+                console.log(sirList[0])
+            }catch (e)
+            {
+               console.log("Error In Get All Response")
+            }
+
+    }
+
+    const [sirList, setSirList] = React.useState<Array<string>>([]);
+
     const [order, setOrder] = React.useState<Order>('asc');
-    const [orderBy, setOrderBy] = React.useState<keyof Data>('calories');
+    const [orderBy, setOrderBy] = React.useState<keyof Data>('Location');
     const [selected, setSelected] = React.useState<readonly string[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
@@ -381,10 +411,10 @@ export default function EnhancedTable() {
                                             >
                                                 {row.EventDate}
                                             </TableCell>
-                                            <TableCell align="right">{row.calories}</TableCell>
-                                            <TableCell align="right">{row.fat}</TableCell>
-                                            <TableCell align="right">{row.carbs}</TableCell>
-                                            <TableCell align="right">{row.protein}</TableCell>
+                                            <TableCell align="right">{row.Location}</TableCell>
+                                            <TableCell align="right">{row.IncidentType}</TableCell>
+                                            <TableCell align="right">{row.IndividualInvolved}</TableCell>
+                                            <TableCell align="right">{row.EventType}</TableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -414,6 +444,7 @@ export default function EnhancedTable() {
                 control={<Switch checked={dense} onChange={handleChangeDense} />}
                 label="Dense padding"
             />
+            <Button onClick={GetAllRecommendations} variant={"contained"}>Random Get Buttom</Button>
         </Box>
     );
 }
