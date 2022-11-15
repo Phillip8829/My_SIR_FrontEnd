@@ -14,8 +14,7 @@ export default function LandingPage() {
                     <Link style={{color: "inherit", padding: 20}} to={"/Report"}>Submit SIR Report</Link>
                     <Link style={{color: "inherit", padding: 20}} to={"/SupervisorView"}>View All SIR Report</Link>
                 </div>
-                <img  src={"/cat.gif"}  alt={""}/>        <img  src={"/cat.gif"}  alt={""}/>         <img  src={"/cat.gif"}  alt={""}/>
-                <img  src={"/cat.gif"}  alt={""}/>        <img  src={"/cat.gif"}  alt={""}/>
+
             </div>
         </Box>
 
