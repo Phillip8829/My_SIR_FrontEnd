@@ -17,7 +17,7 @@ function App() {
             <ButtonAppBar/>
             <Routes>
                 <Route path={"/report"} element={<ReportView/>}/>
-                <Route path={"/view"} element={<SupervisorView/>}/>
+                <Route path={"/SupervisorView"} element={<SupervisorView/>}/>
                 <Route path={'/'} element={<LandingPage/>}/>
             </Routes>
 
