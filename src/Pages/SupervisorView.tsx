@@ -26,48 +26,46 @@ import ButtonUnstyled, {
     ButtonUnstyledProps,
     buttonUnstyledClasses,
 } from '@mui/base/ButtonUnstyled';
+import {useForm} from "@mantine/form";
+import {useEffect} from "react";
 
 
 
 
 interface Data {
-    idNum: string,
-    EventDate: string,
-    Location: string,
-    IncidentType: string,
-    Harm: string,
-    IndividualInvolved: string,
-    EventType: string,
+    id: number,
+    dateTime: string,
+    location: string,
+    incidentType: string,
+    harm: string,
+    individualsInvolved: string,
+    eventType: string,
 
 }
 
 function createData(
-    idNum: string,
-    EventDate: string,
-    Location: string,
-    IncidentType: string,
-    Harm: string,
-    IndividualInvolved: string,
-    EventType: string,
+    id: number,
+    dateTime: string,
+    location: string,
+    incidentType: string,
+    harm: string,
+    individualsInvolved: string,
+    eventType: string,
 
 ): Data {
     return {
-        idNum,
-        EventDate,
-        Location,
-        IncidentType,
-        Harm,
-        IndividualInvolved,
-        EventType,
+        id,
+        dateTime,
+        location,
+        incidentType,
+        harm,
+        individualsInvolved,
+        eventType,
 
     };
 }
 
-const rows = [
-    createData("1",'11-12-23', "Fort Hood", "Actual Event/Incident", "Yes", "Family Memeber, +2","Operative/Invasive Procedure",),
-    createData("2",'11-13-23', "Fort Sill", "Actual Event/Incident", "Yes", "Patient, Visitor, +1","Assult, Fall, +5"),
 
-];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -116,43 +114,43 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
     {
-        id: 'idNum',
-        numeric: false,
+        id: 'id',
+        numeric: true,
         disablePadding: true,
         label: 'id',
     },
     {
-        id: 'EventDate',
+        id: 'dateTime',
         numeric: false,
         disablePadding: true,
         label: 'Event Date',
     },
     {
-        id: 'Location',
+        id: 'location',
         numeric: false,
         disablePadding: false,
         label: 'Location',
     },
     {
-        id: 'IncidentType',
+        id: 'incidentType',
         numeric: false,
         disablePadding: false,
         label: 'Incident Type',
     },
     {
-        id: 'Harm',
+        id: 'harm',
         numeric: false,
         disablePadding: false,
         label: 'Harm',
     },
     {
-        id: 'IndividualInvolved',
+        id: 'individualsInvolved',
         numeric: false,
         disablePadding: false,
         label: 'IndividualInvolved',
     },
     {
-        id: 'EventType',
+        id: 'eventType',
         numeric: false,
         disablePadding: false,
         label: 'EventType',
@@ -283,6 +281,9 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 export default function EnhancedTable() {
 
     const URL: string = "http://localhost:8080/Report"
+    const [id, setId] = React.useState<string>("")
+    const [sirList, setSirList] = React.useState<Array<any>>([]);
+
 
 
     async function GetAllRecommendations()
@@ -292,19 +293,25 @@ export default function EnhancedTable() {
                 const response = await
                 axios.get(URL)
                 console.log(response.data)
-                setSirList(response.data[0])
-                console.log(sirList[0])
+                setSirList(response.data)
             }catch (e)
             {
                console.log("Error In Get All Response")
             }
 
-    }
+    }    useEffect(() =>{
+        GetAllRecommendations()
+    },[])
 
-    const [sirList, setSirList] = React.useState<Array<string>>([]);
 
+
+    // const rows = [
+    //     createData(sirList[0].id,sirList[0].dateTime, sirList[0].location, sirList[0].eventType.toString(), sirList[0].harm.toString(), "Family Memeber, +2","Operative/Invasive Procedure",),
+    //     createData("2",'11-13-23', "Fort Sill", "Actual Event/Incident", "Yes", "Patient, Visitor, +1","Assult, Fall, +5"),
+    //
+    // ];
     const [order, setOrder] = React.useState<Order>('asc');
-    const [orderBy, setOrderBy] = React.useState<keyof Data>('Location');
+    const [orderBy, setOrderBy] = React.useState<keyof Data>('location');
     const [selected, setSelected] = React.useState<readonly string[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
@@ -321,7 +328,7 @@ export default function EnhancedTable() {
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-            const newSelected = rows.map((n) => n.EventDate);
+            const newSelected = sirList[0].map((n: { EventDate: any; }) => n.EventDate);
             setSelected(newSelected);
             return;
         }
@@ -365,7 +372,7 @@ export default function EnhancedTable() {
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - sirList[0].length) : 0;
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -383,25 +390,25 @@ export default function EnhancedTable() {
                             orderBy={orderBy}
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={rows.length}
+                            rowCount={sirList.length}
                         />
                         <TableBody>
                             {/* if you don't need to support IE11, you can replace the `stableSort` call with:
               rows.sort(getComparator(order, orderBy)).slice() */}
-                            {stableSort(rows, getComparator(order, orderBy))
+                            {stableSort(sirList, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row, index) => {
-                                    const isItemSelected = isSelected(row.idNum);
+                                .map((sirList, index) => {
+                                    const isItemSelected = isSelected(sirList.id.toString());
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={(event) => handleClick(event, row.idNum)}
+                                            onClick={(event) => handleClick(event, sirList.id.toString())}
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={row.idNum}
+                                            key={sirList.id}
                                             selected={isItemSelected}
                                         >
                                             <TableCell padding="checkbox">
@@ -419,14 +426,14 @@ export default function EnhancedTable() {
                                                 scope="row"
                                                 padding="none"
                                             >
-                                                {row.idNum}
+                                                {sirList.id}
                                             </TableCell>
-                                            <TableCell align="left">{row.EventDate}</TableCell>
-                                            <TableCell align="left">{row.Location}</TableCell>
-                                            <TableCell align="left">{row.IncidentType}</TableCell>
-                                            <TableCell align="left">{row.Harm}</TableCell>
-                                            <TableCell align="left">{row.IndividualInvolved}</TableCell>
-                                            <TableCell align="left">{row.EventType}</TableCell>
+                                            <TableCell align="left">{sirList.dateTime}</TableCell>
+                                            <TableCell align="left">{sirList.location}</TableCell>
+                                            <TableCell align="left">{sirList.eventType.toString()}</TableCell>
+                                            <TableCell align="left">{sirList.harm.toString()}</TableCell>
+                                            <TableCell align="left">{sirList.individualsInvolved + " "}</TableCell>
+                                            <TableCell align="left">{sirList.eventType.toString()}</TableCell>
 
                                             <TableCell onClick={(e) => e.stopPropagation()}>
 
@@ -453,7 +460,7 @@ export default function EnhancedTable() {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={rows.length}
+                    count={sirList.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
