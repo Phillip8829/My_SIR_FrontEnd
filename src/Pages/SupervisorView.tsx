@@ -22,44 +22,51 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import axios from "axios";
 import {Button} from "@mui/material";
-import {useState} from "react";
+import ButtonUnstyled, {
+    ButtonUnstyledProps,
+    buttonUnstyledClasses,
+} from '@mui/base/ButtonUnstyled';
 
 
 
 
 interface Data {
-    Location: string;
-    IncidentType: string;
-    EventDate: string;
-    EventType: string;
-    Harm: number;
-    IndividualInvolved: number;
-    Details: string;
-}
-
-function createData(
+    idNum: string,
     EventDate: string,
     Location: string,
     IncidentType: string,
-    Harm: number,
-    IndividualInvolved: number,
+    Harm: string,
+    IndividualInvolved: string,
     EventType: string,
-    Details: string
+
+}
+
+function createData(
+    idNum: string,
+    EventDate: string,
+    Location: string,
+    IncidentType: string,
+    Harm: string,
+    IndividualInvolved: string,
+    EventType: string,
+
 ): Data {
     return {
+        idNum,
+        EventDate,
         Location,
         IncidentType,
-        EventDate,
         Harm,
         IndividualInvolved,
         EventType,
-        Details
+
     };
 }
 
 const rows = [
-    createData('11-12-23', "305", "A", 1, 1,"A","A"),
-    createData('11-13-23', "307", "A", 1, 1,"A","A"),
+    createData("1",'11-12-23', "Fort Hood", "Actual Event/Incident", "Yes", "Family Memeber, +2","Operative/Invasive Procedure",),
+    createData("2",'11-13-23', "Fort Sill", "Actual Event/Incident", "Yes", "Patient, Visitor, +1","Assult, Fall, +5"),
+
 ];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -109,6 +116,12 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
     {
+        id: 'idNum',
+        numeric: false,
+        disablePadding: true,
+        label: 'id',
+    },
+    {
         id: 'EventDate',
         numeric: false,
         disablePadding: true,
@@ -122,33 +135,27 @@ const headCells: readonly HeadCell[] = [
     },
     {
         id: 'IncidentType',
-        numeric: true,
+        numeric: false,
         disablePadding: false,
         label: 'Incident Type',
     },
     {
         id: 'Harm',
-        numeric: true,
+        numeric: false,
         disablePadding: false,
         label: 'Harm',
     },
     {
         id: 'IndividualInvolved',
-        numeric: true,
+        numeric: false,
         disablePadding: false,
         label: 'IndividualInvolved',
     },
     {
         id: 'EventType',
-        numeric: true,
+        numeric: false,
         disablePadding: false,
         label: 'EventType',
-    },
-    {
-        id: 'Details',
-        numeric: true,
-        disablePadding: false,
-        label: 'Details',
     },
 ];
 
@@ -241,6 +248,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                     component="div"
                 >
                     {numSelected} selected
+                    <ButtonUnstyled style={{float: "right", color: "green", padding: 15, textDecoration: "bold"}} >SEND UP TO COMMAND</ButtonUnstyled>
                 </Typography>
             ) : (
                 <Typography
@@ -251,6 +259,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 >
 
                     Incident Reports
+
+                    <h5>Reports</h5>
                 </Typography>
             )}
             {numSelected > 0 ? (
@@ -381,17 +391,17 @@ export default function EnhancedTable() {
                             {stableSort(rows, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
-                                    const isItemSelected = isSelected(row.EventDate);
+                                    const isItemSelected = isSelected(row.idNum);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={(event) => handleClick(event, row.EventDate)}
+                                            onClick={(event) => handleClick(event, row.idNum)}
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={row.EventDate}
+                                            key={row.idNum}
                                             selected={isItemSelected}
                                         >
                                             <TableCell padding="checkbox">
@@ -409,12 +419,22 @@ export default function EnhancedTable() {
                                                 scope="row"
                                                 padding="none"
                                             >
-                                                {row.EventDate}
+                                                {row.idNum}
                                             </TableCell>
-                                            <TableCell align="right">{row.Location}</TableCell>
-                                            <TableCell align="right">{row.IncidentType}</TableCell>
-                                            <TableCell align="right">{row.IndividualInvolved}</TableCell>
-                                            <TableCell align="right">{row.EventType}</TableCell>
+                                            <TableCell align="left">{row.EventDate}</TableCell>
+                                            <TableCell align="left">{row.Location}</TableCell>
+                                            <TableCell align="left">{row.IncidentType}</TableCell>
+                                            <TableCell align="left">{row.Harm}</TableCell>
+                                            <TableCell align="left">{row.IndividualInvolved}</TableCell>
+                                            <TableCell align="left">{row.EventType}</TableCell>
+
+                                            <TableCell onClick={(e) => e.stopPropagation()}>
+
+                                                <Button variant={"text"} style={{float: "right"}}>View
+
+                                                </Button>
+
+                                            </TableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -444,7 +464,7 @@ export default function EnhancedTable() {
                 control={<Switch checked={dense} onChange={handleChangeDense} />}
                 label="Dense padding"
             />
-            <Button onClick={GetAllRecommendations} variant={"contained"}>Random Get Buttom</Button>
+            <Button onClick={GetAllRecommendations} variant={"contained"}>Random Get Button</Button>
         </Box>
     );
 }
