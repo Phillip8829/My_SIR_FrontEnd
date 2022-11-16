@@ -1,32 +1,23 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
+import {Link} from "react-router-dom";
 
 
 export default function ButtonAppBar() {
     return (
-        <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
-                <Toolbar>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                    >
 
-                    </IconButton>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        News
-                    </Typography>
-                    <Button color="inherit">Login</Button>
-                </Toolbar>
-            </AppBar>
-        </Box>
+       <div>
+
+           <div className={"Links"} style={{backgroundColor: "#FFF500" , padding: 30, color: "Black"}}>
+               <h1 style={{textDecoration: "underline"}}>Capstone Project</h1>
+               <img style={{backgroundColor: "black", padding: 5}} src={"https://afcwebsite.blob.core.usgovcloudapi.net/uploads/assets/sf_logo_1c_776c839b0c.svg"} alt={""}/>
+               <div>
+                   <Link  style={{color: "inherit", padding: 20}}  to={"/"}>Home Page</Link>
+                   <Link style={{color: "inherit", padding: 20}} to={"/Report"}>Submit SIR Report</Link>
+                   <Link style={{color: "inherit", padding: 20}} to={"/SupervisorView"}>View All SIR Report</Link>
+               </div>
+
+           </div>
+       </div>
+
     );
 }
