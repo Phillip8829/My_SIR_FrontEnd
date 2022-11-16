@@ -143,7 +143,7 @@ export default function ReportView() {
         let witnessNumbers = [report.values.witnessNumbers1, report.values.witnessNumbers2, report.values.witnessNumbers3]
         console.log(dateTime)
 
-        await axios.post("https://hidden-caverns-47454.herokuapp.com/Report", {
+        await axios.post("http://localhost:8080/Report", {
             "dateTime": dateTime,
             "location": report.values.locationOfEvent,
             "eventType": report.values.eventType,

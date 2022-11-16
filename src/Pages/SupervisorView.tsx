@@ -21,14 +21,17 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import axios from "axios";
-import {Button} from "@mui/material";
+import {Button, FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import ButtonUnstyled, {
     ButtonUnstyledProps,
     buttonUnstyledClasses,
 } from '@mui/base/ButtonUnstyled';
 import {useForm} from "@mantine/form";
 import {useEffect} from "react";
-
+import PopUp from "../Components/popUp";
+import PopupState, {bindPopper, bindToggle} from "material-ui-popup-state";
+import Popper from "@mui/material/Popper";
+import Fade from "@mui/material/Fade";
 
 
 
@@ -91,6 +94,7 @@ function getComparator<Key extends keyof any>(
         : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
+
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
 function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
@@ -115,7 +119,7 @@ interface HeadCell {
 const headCells: readonly HeadCell[] = [
     {
         id: 'id',
-        numeric: true,
+        numeric: false,
         disablePadding: true,
         label: 'id',
     },
@@ -223,7 +227,29 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 
 
     const { numSelected } = props;
-
+    function handleSubmitToCommand()
+    {
+        return (
+            <PopupState variant="popper" popupId="demo-popup-popper">
+                {(popupState) => (
+                    <div>
+                        <Button variant="contained" {...bindToggle(popupState)}>
+                            Toggle Popper
+                        </Button>
+                        <Popper {...bindPopper(popupState)} transition>
+                            {({ TransitionProps }) => (
+                                <Fade {...TransitionProps} timeout={350}>
+                                    <Paper>
+                                        <Typography sx={{ p: 2 }}>The content of the Popper.</Typography>
+                                    </Paper>
+                                </Fade>
+                            )}
+                        </Popper>
+                    </div>
+                )}
+            </PopupState>
+        );
+    }
 
 
 
@@ -246,7 +272,47 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                     component="div"
                 >
                     {numSelected} selected
-                    <ButtonUnstyled style={{float: "right", color: "green", padding: 15, textDecoration: "bold"}} >SEND UP TO COMMAND</ButtonUnstyled>
+
+
+                    <PopupState variant="popper" popupId="demo-popup-popper">
+                        {(popupState) => (
+                            <div>
+                                <Button style={{float: "right", backgroundColor: "black", color: "yellow", padding: 10}} variant="contained" {...bindToggle(popupState)} >
+                                    Send Up To Command
+                                </Button>
+                                <Popper {...bindPopper(popupState)} transition>
+                                    {({ TransitionProps }) => (
+                                        <Fade {...TransitionProps} timeout={350}>
+                                            <Paper>
+                                                <Typography sx={{ p: 2 }}>
+                                                    <h1>Send Up To Command</h1>
+                                                    <FormControl fullWidth>
+                                                        <InputLabel id="demo-simple-select-label">Command</InputLabel>
+                                                        <Select
+                                                            labelId="demo-simple-select-label"
+                                                            id="demo-simple-select"
+                                                            value={["Air Force"]}
+                                                            label="Age"
+
+                                                        >
+                                                            <MenuItem value={"Air Force"}>Air Force</MenuItem>
+                                                            <MenuItem value={"Army"}>Army</MenuItem>
+                                                            <MenuItem value={"SWF"}>SWF</MenuItem>
+                                                        </Select>
+                                                    </FormControl>
+
+                                                </Typography>
+                                            </Paper>
+                                        </Fade>
+                                    )}
+                                </Popper>
+                            </div>
+                        )}
+                    </PopupState>
+
+
+
+
                 </Typography>
             ) : (
                 <Typography
@@ -305,6 +371,8 @@ export default function EnhancedTable() {
 
 
 
+
+
     // const rows = [
     //     createData(sirList[0].id,sirList[0].dateTime, sirList[0].location, sirList[0].eventType.toString(), sirList[0].harm.toString(), "Family Memeber, +2","Operative/Invasive Procedure",),
     //     createData("2",'11-13-23', "Fort Sill", "Actual Event/Incident", "Yes", "Patient, Visitor, +1","Assult, Fall, +5"),
@@ -358,6 +426,8 @@ export default function EnhancedTable() {
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
     };
+
+
 
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
@@ -435,9 +505,9 @@ export default function EnhancedTable() {
                                             <TableCell align="left">{sirList.individualsInvolved + " "}</TableCell>
                                             <TableCell align="left">{sirList.eventType.toString()}</TableCell>
 
-                                            <TableCell onClick={(e) => e.stopPropagation()}>
 
-                                                <Button variant={"text"} style={{float: "right"}}>View
+
+                                            <TableCell onClick={(e) => e.stopPropagation()}>         <Button variant={"text"} style={{float: "right"}}>View
 
                                                 </Button>
 
@@ -471,7 +541,12 @@ export default function EnhancedTable() {
                 control={<Switch checked={dense} onChange={handleChangeDense} />}
                 label="Dense padding"
             />
-            <Button onClick={GetAllRecommendations} variant={"contained"}>Random Get Button</Button>
-        </Box>
-    );
+
+        </Box>)
+
+
+
+
+
+
 }
