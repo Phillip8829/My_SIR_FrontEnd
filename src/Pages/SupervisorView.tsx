@@ -21,17 +21,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import axios from "axios";
-import {Button, FormControl, InputLabel, MenuItem, Select} from "@mui/material";
-import ButtonUnstyled, {
-    ButtonUnstyledProps,
-    buttonUnstyledClasses,
-} from '@mui/base/ButtonUnstyled';
-import {useForm} from "@mantine/form";
-import {useEffect} from "react";
-import PopUp from "../Components/popUp";
+import {Alert, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack} from "@mui/material";
+
+import {useEffect, useState} from "react";
 import PopupState, {bindPopper, bindToggle} from "material-ui-popup-state";
 import Popper from "@mui/material/Popper";
 import Fade from "@mui/material/Fade";
+
+
 
 
 
@@ -224,33 +221,24 @@ interface EnhancedTableToolbarProps {
 
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
+    const [selection, setSelection] = React.useState('');
 
-
+    const handleChange = (event: SelectChangeEvent) => {
+        setSelection(event.target.value as string);
+    };
     const { numSelected } = props;
-    function handleSubmitToCommand()
-    {
-        return (
-            <PopupState variant="popper" popupId="demo-popup-popper">
-                {(popupState) => (
-                    <div>
-                        <Button variant="contained" {...bindToggle(popupState)}>
-                            Toggle Popper
-                        </Button>
-                        <Popper {...bindPopper(popupState)} transition>
-                            {({ TransitionProps }) => (
-                                <Fade {...TransitionProps} timeout={350}>
-                                    <Paper>
-                                        <Typography sx={{ p: 2 }}>The content of the Popper.</Typography>
-                                    </Paper>
-                                </Fade>
-                            )}
-                        </Popper>
-                    </div>
-                )}
-            </PopupState>
-        );
-    }
 
+
+function alertSuccess()
+{
+    return (
+        <div>
+        <Alert severity="success">This is a success alert — check it out!</Alert>
+        </div>
+        )
+
+
+}
 
 
     return (
@@ -291,14 +279,23 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                                                         <Select
                                                             labelId="demo-simple-select-label"
                                                             id="demo-simple-select"
-                                                            value={["Air Force"]}
+                                                            value={selection}
                                                             label="Age"
-
+                                                            onChange={handleChange}
                                                         >
                                                             <MenuItem value={"Air Force"}>Air Force</MenuItem>
                                                             <MenuItem value={"Army"}>Army</MenuItem>
                                                             <MenuItem value={"SWF"}>SWF</MenuItem>
+
                                                         </Select>
+
+                                                        {/*<button style={{ padding: 20,backgroundColor: "black", color: "yellow"}} type="button">*/}
+                                                        {/*Submit*/}
+                                                        {/*</button>*/}
+
+
+
+
                                                     </FormControl>
 
                                                 </Typography>
@@ -347,7 +344,6 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 export default function EnhancedTable() {
 
     const URL: string = "http://localhost:8080/Report"
-    const [id, setId] = React.useState<string>("")
     const [sirList, setSirList] = React.useState<Array<any>>([]);
 
 
